@@ -75,7 +75,7 @@ class LoadGenerator:
                                 returning id
                             )
                             insert into version_info (id) select id from new_node
-                            """)                        
+                            """)
 
                         # Brief sleep, cause a somewhat long-running transaction in total
                         await asyncio.sleep(random.random() * .1)
@@ -112,8 +112,5 @@ async def main():
     await asyncio.gather(*lgs)
 
 
-loop = asyncio.get_event_loop()
-try:
-    loop.run_until_complete(main())
-except KeyboardInterrupt:
-    pass
+if __name__ == "__main__":
+    asyncio.run(main())
