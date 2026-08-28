@@ -1,3 +1,4 @@
+How the project was migrated to uv:
 ```bash
 # Install the Postgres libs
 brew install libpq
@@ -25,4 +26,24 @@ docker compose up --detach --remove-orphans --wait
 Load the schema:
 ```bash
 docker compose exec postgres psql -U postgres -f /schema/apply-schema.sql sync-test
+```
+
+Start the API server:
+```bash
+uv run --env-file .env src/demo-app.py
+```
+
+Start the sync:
+```bash
+uv run src/sqlite-via-api-client.py
+```
+
+Start the load generator:
+```bash
+uv run --env-file .env src/load-generator.py
+```
+
+Run the validator during and after the load generator run:
+```bash
+uv run --env-file .env src/consistency-check.py
 ```
