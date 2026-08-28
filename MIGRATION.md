@@ -11,3 +11,18 @@ PATH="/opt/homebrew/opt/libpq/bin:$PATH" LDFLAGS="-L$(brew --prefix openssl@3)/l
 rm -rf .venv venv
 uv sync
 ```
+
+Remove the Postgres volume if needed:
+```bash
+docker compose down -v
+```
+
+Spin up the Postgres service:
+```bash
+docker compose up --detach --remove-orphans --wait
+```
+
+Load the schema:
+```bash
+docker compose exec postgres psql -U postgres -f /schema/apply-schema.sql sync-test
+```
