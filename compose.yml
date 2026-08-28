@@ -5,6 +5,7 @@ services:
     image: postgres:18.4-trixie
     volumes:
       - pgdata:/var/lib/postgresql
+      - ./schema:/schema:ro
     environment:
       - PGTZ=UTC
       - TZ=UTC

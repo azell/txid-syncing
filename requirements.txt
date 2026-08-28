@@ -1,9 +1,0 @@
-asyncpg
-psycopg2
-elasticsearch
-aiopg
-pydantic
-cryptography
-asyncpg
-aiohttp
-aiosqlite

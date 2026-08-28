@@ -12,7 +12,7 @@ import os
 import time
 from base64 import urlsafe_b64decode, urlsafe_b64encode
 from hashlib import sha256
-from typing import List, Optional, Tuple, TypeVar, cast
+from typing import Annotated, List, Optional, Tuple, TypeVar, cast
 
 import asyncpg
 from aiohttp import web
@@ -20,7 +20,6 @@ from cryptography.fernet import Fernet, InvalidSignature, InvalidToken  # type: 
 from lz4.frame import compress, decompress, get_frame_info  # type: ignore
 from orjson import dumps, loads
 from pydantic import BaseModel, Field, validator
-from pydantic.types import ConstrainedInt
 
 BATCH_SIZE_MAX = 2000
 
@@ -46,11 +45,9 @@ def coalesce(*args: Optional[T]) -> Optional[T]:
     return None
 
 
-class BatchSize(ConstrainedInt):
-    # As far as the syncing code is concerned, a batch of 1 works
-    # We validate in `TableExpression` that more reasonable batch sizes are used
-    ge = 1
-    le = BATCH_SIZE_MAX
+# As far as the syncing code is concerned, a batch of 1 works
+# We validate in `TableExpression` that more reasonable batch sizes are used
+BatchSize = Annotated[int, Field(ge=1, le=BATCH_SIZE_MAX)]
 
 
 # TODO: Make this configurable, even though it's not a security-focused key.
