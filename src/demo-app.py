@@ -72,9 +72,9 @@ class Cursor(BaseModel):
     # number of results == batch_size
     # xid_at is the txid of the last row we saw, which since the batch was full,
     # we can't know if we're done with
-    xid_at: Optional[int] = Field()
+    xid_at: Optional[int] = Field(default=None)
     # ... and this is how far we got _within_ the txid of xid_at:
-    xid_at_id: Optional[int] = Field()
+    xid_at_id: Optional[int] = Field(default=None)
 
     # These two are always part of the cursor.
     # xip_list holds the transactions in progress, which may or may not produce
@@ -87,7 +87,7 @@ class Cursor(BaseModel):
     # Watermark before which deleted are skipped. If empty, all deletes are skipped,
     # which should only be the case for the first cursor in a chain, i.e. one where
     # xid_next = 0
-    xid_skip_deletes_before: Optional[int]
+    xid_skip_deletes_before: Optional[int] = Field(default=None)
 
     # When was the cursor created? We don't use this today, but we need this to
     # be able to go "Hey, your cursor is actually so old that soft-deleted data
@@ -158,7 +158,7 @@ class CursorContext(BaseModel):
     snapshot: Snapshot
     count: int
     batch_size: int
-    last: Optional[Tuple[int, int]] = Field()
+    last: Optional[Tuple[int, int]] = Field(default=None)
 
     # We need to have the data on the cursor that produced the above page info
     previous_cursor: Cursor
