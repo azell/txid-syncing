@@ -95,7 +95,7 @@ class Cursor(BaseModel):
     issued_at: Optional[int] = Field(default_factory=lambda: int(time.time()))
 
     def to_opaque_cursor(self, key: bytes = default_cursor_key_not_for_security) -> "OpaqueCursor":
-        return OpaqueCursor(urlsafe_b64encode(Fernet(key).encrypt(compress(dumps(self.dict())))))
+        return OpaqueCursor(urlsafe_b64encode(Fernet(key).encrypt(compress(dumps(self.model_dump())))))
 
     def progress_to(
         self,
@@ -294,7 +294,7 @@ class OpaqueCursor(bytes):
         possible_keys = possible_keys or [default_cursor_key_not_for_security]
         for key in possible_keys:
             try:
-                return Cursor.parse_obj(
+                return Cursor.model_validate(
                     loads(
                         cls._safe_decompress(
                             Fernet(key).decrypt(urlsafe_b64decode(opaque_cursor)), MAX_UNCOMPRESSED_CURSOR_SIZE

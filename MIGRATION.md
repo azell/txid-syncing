@@ -45,5 +45,5 @@ uv run --env-file .env src/load-generator.py
 
 Run the validator during and after the load generator run:
 ```bash
-uv run --env-file .env src/consistency-check.py
+uv run --env-file .env src/consistency-check.py sqlite
 ```
