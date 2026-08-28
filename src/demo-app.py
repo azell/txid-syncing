@@ -19,7 +19,7 @@ from aiohttp import web
 from cryptography.fernet import Fernet, InvalidSignature, InvalidToken  # type: ignore
 from lz4.frame import compress, decompress, get_frame_info  # type: ignore
 from orjson import dumps, loads
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
 
 BATCH_SIZE_MAX = 2000
 
@@ -72,9 +72,9 @@ class Cursor(BaseModel):
     # number of results == batch_size
     # xid_at is the txid of the last row we saw, which since the batch was full,
     # we can't know if we're done with
-    xid_at: Optional[int] = Field(allow_null=True)
+    xid_at: Optional[int] = Field()
     # ... and this is how far we got _within_ the txid of xid_at:
-    xid_at_id: Optional[int] = Field(allow_null=True)
+    xid_at_id: Optional[int] = Field()
 
     # These two are always part of the cursor.
     # xip_list holds the transactions in progress, which may or may not produce
@@ -92,11 +92,7 @@ class Cursor(BaseModel):
     # When was the cursor created? We don't use this today, but we need this to
     # be able to go "Hey, your cursor is actually so old that soft-deleted data
     # has been fully cleaned up, so your cursor isn't going to catch old data"
-    issued_at: Optional[int]
-
-    @validator("issued_at", pre=True, always=True)
-    def set_issued_at(cls, v: int) -> int:
-        return v or int(time.time())
+    issued_at: Optional[int] = Field(default_factory=lambda: int(time.time()))
 
     def to_opaque_cursor(self, key: bytes = default_cursor_key_not_for_security) -> "OpaqueCursor":
         return OpaqueCursor(urlsafe_b64encode(Fernet(key).encrypt(compress(dumps(self.dict())))))
@@ -162,7 +158,7 @@ class CursorContext(BaseModel):
     snapshot: Snapshot
     count: int
     batch_size: int
-    last: Optional[Tuple[int, int]] = Field(allow_null=True)
+    last: Optional[Tuple[int, int]] = Field()
 
     # We need to have the data on the cursor that produced the above page info
     previous_cursor: Cursor
