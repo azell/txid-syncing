@@ -13,9 +13,10 @@ rm -rf .venv venv
 uv sync
 ```
 
-Remove the Postgres volume if needed:
+Remove the Postgres and SQLite volumes if needed:
 ```bash
 docker compose down -v
+rm synced-test.db
 ```
 
 Spin up the Postgres service:
@@ -26,6 +27,11 @@ docker compose up --detach --remove-orphans --wait
 Load the schema:
 ```bash
 docker compose exec postgres psql -U postgres -f /schema/apply-schema.sql sync-test
+```
+
+Populate the connection string:
+```bash
+echo 'POSTGRES_CONFIG=postgres://postgres:XXXX@127.0.0.1:5432/sync-test?sslmode=disable' > .env
 ```
 
 Start the API server:
